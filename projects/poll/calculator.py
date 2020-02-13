@@ -10,7 +10,7 @@ import pandas as pd
 from scipy import stats
 
 
-# In[76]:
+# In[2]:
 
 
 def mean(X):
@@ -73,7 +73,67 @@ def kurtosis(X):
     return pd.Series(kurts,X.columns)
 
 
-# In[77]:
+# In[ ]:
+
+
+def sample_size_avg_score(s,delta,t=1.96):
+    """
+    Calculates minimum sample size for a certain margin of error for an avg score test
+    
+    Arguments:
+        delta -- margin of error
+        s -- stddev
+        t=1.96 -- z-score for 0.95 confidence interval
+    
+    Returns:
+        n -- sample size
+    """
+    return np.square(t*s/delta)
+
+def margin_of_error_avg_score(n,s,t=1.96):
+    """
+    Calculates margin of error for a certain minimal sample size in an avg score test
+    
+    Arguments:
+        n -- sample size
+        s -- stddev
+        t=1.96 -- z-score for 0.95 confidence interval
+        
+    Returns:
+        delta -- margin of error
+    """
+    return t*s/np.sqrt(n)
+
+def sample_size_proportion(delta,p,t=1.96):
+    """
+    Calculates minimum sample size for a certain margin of error for a proportion test
+    
+    Arguments:
+        delta -- margin of error, 0<delta<1
+        p -- proportion (chance to succeed | sample class share | etc)
+        t=1.96 -- z-score for 0.95 confidence interval
+    
+    Returns:
+        n -- sample size
+    """
+    return np.square((t*np.sqrt(p*(1-p)))/delta)
+
+def margin_of_error_proportion(n,p,t=1.96):
+    """
+    Calculates margin of error 
+    
+    Arguments:
+        n -- sample size
+        p -- proportion (chance to succeed | sample class share | etc)
+        t=1.96 -- z-score for 0.95 confidence interval
+        
+    Returns:
+        delta -- margin of error
+    """    
+    return t * np.sqrt(p*(1-p)/n)
+
+
+# In[3]:
 
 
 # x = 50 *np.random.rand(20,1)
