@@ -142,6 +142,9 @@ def margin_of_error_proportion(n,p,t=1.96):
     """    
     return t * np.sqrt(p*(1-p)/n)
 
+def ddof(x):
+    return -2*x/(1-x)
+
 
 # In[37]:
 
