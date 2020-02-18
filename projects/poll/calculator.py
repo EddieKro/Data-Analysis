@@ -10,7 +10,7 @@ import pandas as pd
 from scipy import stats
 
 
-# In[38]:
+# In[ ]:
 
 
 def mean(X):
@@ -19,10 +19,21 @@ def mean(X):
 def expected_value(X):
     return X.mean()
 
-def variance(X):
+def variance(X,ddof=1):
+    """    
+    Compute the variance; dedicated to @craq21
+    Calculates variance,a measure of spread of a distribution
+    
+    Arguments:
+        X - pd.Series or pd.DataFrame
+        ddof - delta degrees of freedom; 1 by default for calculating sample variance, 0 for maximum likelihood estimate of the variance for normally distributed variables
+    
+    Returns:
+        variance
+    """
     mu = mean(X)
     diffx = X-mu
-    return  (np.sum(diffx**2))/(X.shape[0]-1)
+    return  (np.sum(diffx**2))/(X.shape[0]-ddof)
 
 def stddev(X):
     return variance(X)**0.5
