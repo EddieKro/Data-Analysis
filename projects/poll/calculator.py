@@ -10,7 +10,7 @@ import pandas as pd
 from scipy import stats
 
 
-# In[2]:
+# In[38]:
 
 
 def mean(X):
@@ -37,11 +37,11 @@ def median(X):
     l = X.shape[0]
     medians = []
     for col in X.columns:
-        sorted_vals = X[col].sort_values()
+        temp  = X[col].sort_values().copy().reset_index(drop=True)
         if l%2==0:
-            medians.append((sorted_vals[l//2-1]+sorted_vals[l//2])*0.5)
+            medians.append((temp[l//2-1]+temp[l//2])*0.5)
         else:
-            medians.append(sorted_vals[l//2])
+            medians.append(temp[l//2])
     
     return pd.Series(medians,X.columns)
     
@@ -63,9 +63,8 @@ def skewness(X):
 
 def kurtosis(X):
     kurts = np.array([])
-    mu,var = mean(X),variance(X)
-    for col in X.columns:
-        
+    mu = mean(X)
+    for col in X.columns:  
         diffx,n = X[col]-mu[col], X[col].size
         kurt = (1/n * np.sum(diffx**4)) / (1/n * np.sum(diffx**2))**2
         kurts = np.append(kurts,kurt-3)
@@ -73,7 +72,7 @@ def kurtosis(X):
     return pd.Series(kurts,X.columns)
 
 
-# In[ ]:
+# In[3]:
 
 
 def sample_size_avg_score(s,delta,t=1.96):
@@ -133,7 +132,7 @@ def margin_of_error_proportion(n,p,t=1.96):
     return t * np.sqrt(p*(1-p)/n)
 
 
-# In[3]:
+# In[37]:
 
 
 # x = 50 *np.random.rand(20,1)
@@ -144,4 +143,6 @@ def margin_of_error_proportion(n,p,t=1.96):
 # v2 = stats.skew(t)
 # v1,v2
 # v2/v1.values
+#marks = np.array([62, 81, 78, 81, 98, 81, 61, 98,  71, 61]).reshape(-1,1)
+# df = pd.DataFrame(data=marks,columns=['Mark'])
 
