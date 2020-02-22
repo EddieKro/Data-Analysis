@@ -66,7 +66,7 @@ def skewness(X):
 #        coeff = np.sqrt(n*(n-1.0))/(n-2.0) 
 #        moments = (np.sum(diffx**3)) / (np.sum(diffx**2) ** 1.5)
 #        skew = coeff * moments
-        
+
         skew = (1/n * np.sum(diffx**3))/((1/(n-1) * np.sum(diffx**2))**1.5)
         skews.append(skew)
         
@@ -81,6 +81,13 @@ def kurtosis(X):
         kurts = np.append(kurts,kurt-3)
         
     return pd.Series(kurts,X.columns)
+
+def custom_percentile(data,p):
+    ps = []
+    for col in data.columns:
+        ps.append(np.percentile(data[col],p))
+    
+    return pd.Series(ps,data.columns)
 
 
 # In[3]:
