@@ -1,6 +1,11 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[45]:
+
+
 import numpy as np
 import pandas as pd
-
 def mean(X):
     return X.sum()/X.shape[0]
 
@@ -96,4 +101,45 @@ class RankMethods:
             if x[i]==y[i]:
                 return False
         return True    
+
+def concordant_discordant(x):
+    concordant,discordant =[],[]
+    
+    for i in range(len(x)-1):
+        tmp = x[i+1:]
+        c = sum(1 for el in tmp if el>x[i])
+        d = tmp.shape[0]-c
+        
+        concordant.append(c)
+        discordant.append(d)
+    
+    return np.array(concordant), np.array(discordant)
+
+def concordant_discordant_ties(x,y):
+    c,d,t_x,t_y,t_b = 0,0,0,0,0
+    
+    n = x.shape[0]
+    
+    for i in range(n-1):
+        for j in range(1,n):
+            if (x[i]>x[j] and y[i]>y[j]) or (x[i]<x[j] and y[i]<y[j]):
+                c+=1
+            elif (x[i]<x[j] and y[i]>y[j]) or (x[i]>x[j] and y[i]<y[j]):
+                d+=1
+            if (x[i]==x[j] or y[i]==y[j]):
+                if x[i]==x[j]:
+                    t_x+=1
+                if y[i]==y[j]:
+                    t_y+=1
+                if x[i]==x[j] and y[i]==y[j]:
+                    t_b+=1
+    return c,d,t_x-t_b,t_y-t_b
+
+
+# In[50]:
+
+
+#Example
+r = np.array([1,2,4,3,6,5,8,7,10,9,12,11])
+c,d= concordant_discordant(r)
 
