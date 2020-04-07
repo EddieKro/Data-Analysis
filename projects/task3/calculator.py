@@ -1,11 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[45]:
-
-
 import numpy as np
 import pandas as pd
+
 def mean(X):
     return X.sum()/X.shape[0]
 
@@ -90,7 +85,7 @@ class RankMethods:
     def rank_difference_sum(rank_x,rank_y):
         assert rank_x.shape[0]==rank_y.shape[0]
 
-        diff = rank_difference(rank_x,rank_y)
+        diff = RankMethods.rank_difference(rank_x,rank_y)
         return np.square(diff).sum()
     
     @staticmethod
@@ -102,44 +97,38 @@ class RankMethods:
                 return False
         return True    
 
-def concordant_discordant(x):
-    concordant,discordant =[],[]
-    
-    for i in range(len(x)-1):
-        tmp = x[i+1:]
-        c = sum(1 for el in tmp if el>x[i])
-        d = tmp.shape[0]-c
-        
-        concordant.append(c)
-        discordant.append(d)
-    
-    return np.array(concordant), np.array(discordant)
-
 def concordant_discordant_ties(x,y):
-    c,d,t_x,t_y,t_b = 0,0,0,0,0
-    
-    n = x.shape[0]
-    
+    c,d,t,u,both_zero,n =*[0 for i in range(5)], x.shape[0]
     for i in range(n-1):
-        for j in range(1,n):
-            if (x[i]>x[j] and y[i]>y[j]) or (x[i]<x[j] and y[i]<y[j]):
-                c+=1
-            elif (x[i]<x[j] and y[i]>y[j]) or (x[i]>x[j] and y[i]<y[j]):
-                d+=1
-            if (x[i]==x[j] or y[i]==y[j]):
-                if x[i]==x[j]:
-                    t_x+=1
-                if y[i]==y[j]:
-                    t_y+=1
-                if x[i]==x[j] and y[i]==y[j]:
-                    t_b+=1
-    return c,d,t_x-t_b,t_y-t_b
+        j = i+1
+        
+        c+= sum((y[i]>y[j:]) & (x[i]>x[j:])) + sum((y[i]<y[j:])&(x[i]<x[j:]))
+        d+= sum((y[i]<y[j:]) & (x[i]>x[j:])) + sum((y[i]>y[j:])&(x[i]<x[j:]))
+        
+        t+=sum(x[i] == x[j:])
+        u+=sum(y[i] == y[j:])
+        
+        both_zero+= sum((x[i] == x[j:])&(y[i] == y[j:]))
+    
+    return c,d,t-both_zero,u-both_zero
+
+def concordant_discordant(x,y):
+    assert x.shape[0]==y.shape[0]
+
+    c,d,n = 0,0,x.shape[0]
+    
+    for i in range(n):
+        if np.sign(x[(i+1)%n]-x[i])==np.sign(y[(i+1)%n]-y[i]):
+            c+=1
+        else:
+            d+=1
+    return c,d
 
 
-# In[50]:
-
-
-#Example
-r = np.array([1,2,4,3,6,5,8,7,10,9,12,11])
-c,d= concordant_discordant(r)
+def count_rank_tie(ranks):
+    cnt = np.bincount(ranks).astype('int64', copy=False)
+    cnt = cnt[cnt > 1]
+    return ((cnt * (cnt - 1) // 2).sum(),
+        (cnt * (cnt - 1.) * (cnt - 2)).sum(),
+        (cnt * (cnt - 1.) * (2*cnt + 5)).sum())
 
